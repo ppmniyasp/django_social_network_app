@@ -1,0 +1,105 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<h3>{{user.username}}</h3>
+<table style="border: 1px solid black; max-height: 400px; min-height: 100px; min-width: 400px; " class="table">
+    <tbody id='chat-body'>
+        {% for message in messages %}
+        {% if message.sender == request.user.username %}
+        <tr>
+            <td style="width: 400px; align-items: end; height: 10px; ">
+                <p style="float: right;">
+                    {{message.message}}
+                </p>
+            </td>
+            <td>
+                <p><small class="p-1 shadow-sm">{{message.timestamp|time:'H:i'}}</small>
+                </p>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td style="height: 10px; width: 400px; ">
+                <p >
+                    {{message.message}}
+                </p>
+            </td>
+            <td>
+                <p><small class="p-1 shadow-sm">{{message.timestamp|time:'H:i'}}</small>
+                </p>
+            </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+<div>
+    <input id="input-text" type="text">
+</div>
+<div>
+    <button id="submit-btn">send</button>
+</div>
+
+{{user.id|json_script:"json-username"}}
+{{user.username|json_script:"json-username-receiver"}}
+{{request.user.username|json_script:"json-message-username"}}
+
+<script>
+    const id = JSON.parse(document.getElementById('json-username').textContent);
+    const message_username = JSON.parse(document.getElementById('json-message-username').textContent);
+    
+
+    const socket = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws/'
+        + id
+        + '/'
+    );
+
+    socket.onopen = function(e){
+        console.log("connection establishd");
+    }
+
+    socket.onclose = function(e){
+        console.log("connection close");
+    }
+
+    socket.onerror = function(e){
+        console.log(e);
+    }
+
+    socket.onmessage = function(e){
+        // console.log(e);
+        const data = JSON.parse(e.data);
+        console.log(data)
+        if(data.username == message_username){
+            document.querySelector('#chat-body').innerHTML += `<tr>
+                                                                    <td style="width: 400px; align-items: end; height: 10px; ">
+                                                            n        <p style="float: right;">${data.message}</p>
+                                                                    </td>
+                                                                </tr>`
+        }else{
+            document.querySelector('#chat-body').innerHTML += `<tr>
+                                                                    <td style="height: 10px; ">
+                                                                    <p style="float: left; width: 400px;" >${data.message}</p>
+                                                                    </td>
+                                                                </tr>`
+        }
+    }
+
+    document.querySelector('#submit-btn').onclick = function(e){
+    const message_input = document.querySelector('#input-text');
+    const message = message_input.value;
+
+    socket.send(JSON.stringify({
+        'message':message,
+        'username':message_username,
+        // 'receiver':receiver
+    }));
+
+    message_input.value = '';
+}
+
+</script>
+{% endblock content %}
