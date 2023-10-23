@@ -21,7 +21,7 @@ class Message(models.Model):
 
 
 class Chat(models.Model):
-    participants = models.ManyToManyField(User, related_name='chats', null=True, blank=True)
+    participants = models.ManyToManyField(User, related_name='chats')
     name = models.CharField(max_length=100, null=True, blank=True)  # Chat name or title
     last_message = models.TextField( null=True, blank=True)  # Last message content
     last_message_timestamp = models.DateTimeField(null=True, blank=True)  # Timestamp of the last message
@@ -30,13 +30,6 @@ class Chat(models.Model):
     def __str__(self):
         return self.name
     
-class UserProfileModel(models.Model):
-    user = models.OneToOneField(to=User, on_delete=models.CASCADE)
-    name = models.CharField(blank=True, null=True, max_length=100)
-    online_status = models.BooleanField(default=False)
-
-    def __str__(self) -> str:
-        return self.user.username
 
 
 class ChatModel(models.Model):

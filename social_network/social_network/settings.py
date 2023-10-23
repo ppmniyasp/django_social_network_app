@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'chat',
+    'users',
 ]
 
 ASGI_APPLICATION = 'social_network.asgi.application'
