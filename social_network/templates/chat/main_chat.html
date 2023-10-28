@@ -8,6 +8,7 @@
 <small id="{{user.username}}_small">Offline</small>
 {% endif %}
 <hr>
+<a href="{% url 'chats' %}">Go Back</a>
 <table style="border: 1px solid black; max-height: 400px; min-height: 100px; min-width: 400px; " class="table">
     <tbody id='chat-body'>
         {% for message in messages %}
@@ -16,6 +17,11 @@
             <td style="width: 400px; align-items: end; height: 10px; ">
                 <p style="float: right;">
                     {{message.message}}
+                    {% if message.is_seen %}
+                    <small  class="{{user.username}}_seen">seen</small>
+                    {% else %}
+                    <small  class="{{user.username}}_seen"></small>
+                    {% endif %}
                 </p>
             </td>
             <!-- <td>
@@ -53,6 +59,7 @@
 <script>
     const id = JSON.parse(document.getElementById('json-username').textContent);
     const message_username = JSON.parse(document.getElementById('json-message-username').textContent);
+    const receiver = JSON.parse(document.getElementById('json-username-receiver').textContent);
     
 
     const socket = new WebSocket(
@@ -65,6 +72,12 @@
 
     socket.onopen = function(e){
         console.log("connection establishd");
+
+        socket.send(JSON.stringify({
+        'initial_message': true,
+        'username': message_username,
+        'receiver':receiver
+    }))
     }
 
     socket.onclose = function(e){
@@ -78,30 +91,51 @@
     socket.onmessage = function(e){
         // console.log(e);
         const data = JSON.parse(e.data);
-        console.log(data)
-        if(data.username == message_username){
-            document.querySelector('#chat-body').innerHTML += `<tr>
-                                                                    <td style="width: 400px; align-items: end; height: 10px; ">
-                                                                       <p style="float: right;">${data.message}</p>
-                                                                    </td>
-                                                                </tr>`
+        if (data.initial == true){
+            // console.log(message_username)
+            // console.log(receiver)
+            if(data.username != message_username){
+                // var user_to_change = document.getElementById(`${data.username}_status`)
+                var is_see_list = document.querySelectorAll(`.${receiver}_seen`);
+                is_see_list.forEach(function (element) {
+                    element.textContent = 'seen';
+                });
+                
+                
+
+            }
         }else{
-            document.querySelector('#chat-body').innerHTML += `<tr>
-                                                                    <td style="height: 10px; ">
-                                                                    <p style="float: left; width: 400px;" >${data.message}</p>
-                                                                    </td>
-                                                                </tr>`
+            if(data.username == message_username){
+                var small_status_to_change = document.getElementById(`${receiver}_small`).textContent
+                // var small_status_to_change = small_status_element ? small_status_element.textContent : null;
+                var smallTag = '';
+                if (small_status_to_change === 'Online') {
+                    smallTag = 'seen';
+                }
+                document.querySelector('#chat-body').innerHTML += `<tr>
+                                                                        <td style="width: 400px; align-items: end; height: 10px; ">
+                                                                        <p style="float: right;">${data.message}  <small class="${receiver}_seen">${smallTag}</small></p>
+                                                                        </td>
+                                                                    </tr>`
+            }else{
+                document.querySelector('#chat-body').innerHTML += `<tr>
+                                                                        <td style="height: 10px; ">
+                                                                        <p style="float: left; width: 400px;" >${data.message}</p>
+                                                                        </td>
+                                                                    </tr>`
+            }
         }
     }
 
     document.querySelector('#submit-btn').onclick = function(e){
     const message_input = document.querySelector('#input-text');
     const message = message_input.value;
+    const receiver = JSON.parse(document.getElementById('json-username-receiver').textContent);
 
     socket.send(JSON.stringify({
         'message':message,
         'username':message_username,
-        // 'receiver':receiver
+        'receiver':receiver
     }));
 
     message_input.value = '';

@@ -3,6 +3,7 @@
 {% block content %}
 
    <h3>lets chat</h3>
+   <h4>You have (<span style="color: red;">{{msg_cnt}}</span>) Unread chats</h4>
    <table>
     <tr>
         <th></th>
@@ -10,10 +11,14 @@
     </tr>
     {% for user in users %}
     <tr>
-        
-        <td> <a href="{% url 'chat-page' user.username %}">{{user.username}}</a></td>
+        {% if user.username in not_read_chat %}
+        <td> <a style="text-decoration: none; color: black; font-weight: bold;" href="{% url 'chat-page' user.username %}"> <b>{{user.username}}</b></a> (not read)</td>
+        {% else %}
+        <td> <a style="text-decoration: none;" href="{% url 'chat-page' user.username %}">{{user.username}}</a></td>
+        {% endif %}
 
     </tr>
     {% endfor %}
    </table>
+
 {% endblock content %}
