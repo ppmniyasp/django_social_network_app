@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import ChatRoom, Message,ChatModel
+from .models import ChatModel
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
@@ -32,23 +32,7 @@ def chatPage(request, username):
     #     msg.read_status = True
     #     msg.save()
     # chat = ChatModel.objects.get(sender=username)
-    # chat.read_status = True
-
-    
+    # chat.read_status = True    
     context = {'users':users,'user':user_object, 'messages':message_objs}
     return render(request, 'chat/main_chat.html', context)
 
-@login_required(login_url='profile')
-def chat_room_view(request, chat_room_id):
-    chat_room = ChatRoom.objects.get(id=chat_room_id)
-    messages = Message.objects.filter(chat_room=chat_room).order_by('timestamp')
-
-    if request.method == 'POST':
-        content = request.POST.get('message_content')
-        sender = request.user
-        status = 'unread'  # Set the initial status to 'unread'
-        message = Message(content=content, sender=sender, chat_room=chat_room, status=status)
-        message.save()
-        return redirect('chat_room', chat_room_id=chat_room_id)
-
-    return render(request, 'chat/lobby.html', {'chat_room': chat_room, 'messages': messages})

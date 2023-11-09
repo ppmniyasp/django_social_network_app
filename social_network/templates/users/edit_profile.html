@@ -1,0 +1,23 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<div id="wrapper">
+    <div class="container">
+      <div class="phone-app-ddemo"></div>
+      <div class="form-data">
+        <form action="" method="POST" enctype="multipart/form-data">
+			{% csrf_token %}
+          <div class="logo">
+            <h3 style="padding: 20px; font-size: 20px;">Edit Profile</h3>
+          </div>
+          {{form.as_p}}
+          <button class="form-btn" type="submit">Save</button>
+          <!-- <a href="index.html" class="form-btn" type="submit">Log in</a> -->
+          
+        </form>
+        
+      </div>
+    </div>
+
+</div>
+{% endblock content %}
