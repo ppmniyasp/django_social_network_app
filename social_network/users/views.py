@@ -12,7 +12,7 @@ from django.contrib import messages
 
 from .models import Profile
 from post.models import Post, Follow
-from .forms import EditProfileForm
+from .forms import EditProfileForm, RegisterForm
 
 
 
@@ -49,6 +49,30 @@ def logoutProfile(request):
     logout(request)
     messages.error(request,'user was loged out..')
     return redirect('login')
+
+def registerProfile(request):
+    page = 'register'
+    form = RegisterForm()
+
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False) # WE PUT HOLED THE SAVE METHOD TO MAKE SOME CHANGES IN FORM DATA(USERNAME TO LOWER)
+            user.username = user.username.lower()
+            user.save()
+
+            messages.success(request, 'User account was created')
+
+            login(request,user)
+            return redirect('index')
+
+        # else:
+        #     messages.error(request,'An error has occurred during registration..')
+
+    context = {'page':page, 'form':form}
+
+    return render(request, 'users/login-register.html', context)
+
 
 def profile(request, username):
     Profile.objects.get_or_create(user=request.user)
@@ -112,26 +136,4 @@ def edit_profile(request):
     }
     return render(request, 'users/edit_profile.html', context)
 
-# def EditProfile(request):
-#     user = request.user.id
-#     profile = Profile.objects.get(user__id=user)
-
-#     if request.method == "POST":
-#         form = EditProfileForm(request.POST, request.FILES, instance=request.user.profile)
-#         if form.is_valid():
-#             profile.image = form.cleaned_data.get('image')
-#             profile.first_name = form.cleaned_data.get('first_name')
-#             profile.last_name = form.cleaned_data.get('last_name')
-#             profile.location = form.cleaned_data.get('location')
-#             profile.url = form.cleaned_data.get('url')
-#             profile.bio = form.cleaned_data.get('bio')
-#             profile.save()
-#             return redirect('profile', profile.user.username)
-#     else:
-#         form = EditProfileForm(instance=request.user.profile)
-
-#     context = {
-#         'form':form,
-#     }
-#     return render(request, 'editprofile.html', context)
 

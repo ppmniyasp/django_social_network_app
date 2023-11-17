@@ -1,7 +1,22 @@
 {% extends 'main.html' %}
+{% load crispy_forms_tags %}
 {% load static %}
 {% block content %}
-<div id="wrapper">
+<br><br>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://kit.fontawesome.com/fc1e235b2e.js"></script>
+  <link rel="stylesheet" href="{% static 'assets2/style.css' %}">
+  <title>Instagram Login Form</title>
+</head>
+
+<body>
+  <div style="padding-top: 1rem;" id="wrapper">
     <div class="container">
       <div class="phone-app-ddemo"></div>
       <div class="form-data">
@@ -10,7 +25,13 @@
           <div class="logo">
             <h3 style="padding: 20px; font-size: 20px;">Edit Profile</h3>
           </div>
-          {{form.as_p}}
+          {{form.name}}
+          {{form.email}}
+          {{form.bio}}
+          {{form.profile_img}}
+          {{form.gender}}
+          {{form.social_website}}
+          {{form.location}}
           <button class="form-btn" type="submit">Save</button>
           <!-- <a href="index.html" class="form-btn" type="submit">Log in</a> -->
           
@@ -20,4 +41,9 @@
     </div>
 
 </div>
+
+</body>
+
+</html>
+
 {% endblock content %}

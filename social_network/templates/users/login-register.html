@@ -1,19 +1,68 @@
 {% extends 'main.html' %}
-
+{% load static %}
 {% block content %}
+<br><br>
+<!DOCTYPE html>
+<html lang="en">
 
-    <h1>Login</h1>
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="text" name="username">
-        <input type="text" name="password">
-        <button type="submit">Login</button>
-    </form>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://kit.fontawesome.com/fc1e235b2e.js"></script>
+  <link rel="stylesheet" href="{% static 'assets2/style.css' %}">
+  <title>Instagram Login Form</title>
+</head>
+
+<body>
+
+  <div id="wrapper">
+    <div class="container">
+      <div class="phone-app-ddemo"></div>
+      <div class="form-data">
+        {% if page == 'register' %}
+
+        <form action="" method="POST" enctype="multipart/form-data">
+			{% csrf_token %}
+          <div class="logo">
+            <h3 style="padding: 20px; font-size: 20px;">Sign Up</h3>
+          </div>
+          {{form.first_name}} <br>
+          {{form.username}} <br>
+          {{form.email}} <br>
+          {{form.password1}} <br>
+          {{form.password2}} <br>
+          <button class="form-btn" type="submit">Register</button>
+          <!-- <a href="index.html" class="form-btn" type="submit">Log in</a> -->
+          {% for field in form %}
+          {% for error in field.errors %}
+          <p style="color: red;">{{error}}</p>
+          {% endfor %}
+          {% endfor %} <br>
+          <p>Already have an account <a href="{% url 'login' %}">Login</a></p>
+        </form>
+    
+        {% else %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="logo">
+                <h3 style="padding: 20px; font-size: 20px;">Login</h3>
+            </div>
+            <input type="text" name="username">
+            <input type="text" name="password">
+            <button class="form-btn" type="submit-">Login</button>
+    
+            <p>Don't have an account <a href="{% url 'register' %}">Sign up</a></p>
+        </form>
+        {% endif %}
+        
+      </div>
+    </div>
+
+  </div>
+
+</body>
+
+</html>
+
 {% endblock content %}

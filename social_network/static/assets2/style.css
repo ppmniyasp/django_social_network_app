@@ -23,6 +23,7 @@ a {
 
 body {
   background-color: #fafafa;
+  padding-top: 72px;
 }
 
 #wrapper {
@@ -31,7 +32,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding-top: 5rem;
+  padding-top: 2rem;
 }
 
 .container {
@@ -75,6 +76,13 @@ body {
 }
 
 .form-data form input {
+  padding: .8rem;
+  margin-bottom: .5rem;
+  border: 2px solid #eee;
+  border-radius: .4rem;
+}
+
+.form-data form select {
   padding: .8rem;
   margin-bottom: .5rem;
   border: 2px solid #eee;

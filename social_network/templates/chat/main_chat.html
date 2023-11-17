@@ -1,56 +1,160 @@
 {% extends 'main.html' %}
-
+{% load static %}
 {% block content %}
-<h3>{{user.username}}</h3>
-{% if user.profile.online_status %}
-<small id="{{user.username}}_small">Online</small>
-{% else %}
-<small id="{{user.username}}_small">Offline</small>
-{% endif %}
-<hr>
-<a href="{% url 'chats' %}">Go Back</a>
-<table style="border: 1px solid black; max-height: 400px; min-height: 100px; min-width: 400px; " class="table">
-    <tbody id='chat-body'>
-        {% for message in messages %}
-        {% if message.sender == request.user.username %}
-        <tr>
-            <td style="width: 400px; align-items: end; height: 10px; ">
-                <p style="float: right;">
-                    {{message.message}}
-                    {% if message.is_seen %}
-                    <small  class="{{user.username}}_seen">seen</small>
-                    {% else %}
-                    <small  class="{{user.username}}_seen"></small>
+<head>
+    <title>Chat</title>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" >
+    <!-- Font awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" >
+ 
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets3/css/chatstyle.css' %}">
+</head>
+<body>
+    <div class="container-fluid h-100">
+        <div class="row justify-content-center h-100">
+            <div class="col-sm-5 col-md-4 col-xl-3 chat"><div class="card mb-sm-3 mb-md-0 contacts_card">
+                <div class="card-header">
+                    <form action="" method="get">
+                        <div class="input-group">
+                            <input type="text" placeholder="Search..." id="search" name="search_query" value="{{search_query}}" class="form-control search">
+                            <div class="input-group-prepend">
+                                <button class="input-group-text search_btn" type="submit"><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-body contacts_body">
+                    <ui class="contacts">
+                    <li>
+                        <h5>You have (<span style="color: red;">{{msg_cnt}}</span>) Unread chats</h5>
+                    </li>
+                    {% for profile in search_profile %}
+                    {% if request.user.username != profile.username %}
+                        {% if profile.username == chat_user %}
+                        <li class="active">
+                        {% else %}
+                        <li>
+                        {% endif %}
+                            <div class="d-flex bd-highlight">
+                                <div class="img_cont">
+                                    <img src="{{ profile.profile_img.url }}" class="rounded-circle user_img">
+                                    {% if profile.online_status %}
+                                    <span class="online_icon"></span>
+                                    {% else %}
+                                    <span class="online_icon offline"></span>
+                                    {% endif %}
+                                </div>
+                                <a id="removeBold" style="text-decoration: none;" href="{% url 'chat-page' profile.username %}">
+                                <div class="user_info">
+                                    {% if profile.username in not_read_chat %}
+                                    <span id="myName" class="bold">{{profile.name | title}}</span>
+                                    <p id="myUsername" class="bold">{{profile.username}}</p>
+                                    {% else %}
+                                    <span>{{profile.name | title}} </span>
+                                    <p>{{profile.username}}</p>
+                                    {% endif %}
+                                </div></a>
+                            </div>
+                        </li>
                     {% endif %}
-                </p>
-            </td>
-            <!-- <td>
-                <p><small class="p-1 shadow-sm">{{message.timestamp|time:'H:i'}}</small>
-                </p>
-            </td> -->
-        </tr>
-        {% else %}
-        <tr>
-            <td style="height: 10px; width: 400px; ">
-                <p >
-                    {{message.message}}
-                </p>
-            </td>
-            <!-- <td>
-                <p><small class="p-1 shadow-sm">{{message.timestamp|time:'H:i'}}</small>
-                </p>
-            </td> -->
-        </tr>
-        {% endif %}
-        {% endfor %}
-    </tbody>
-</table>
-<div>
-    <input id="input-text" type="text">
-</div>
-<div>
-    <button id="submit-btn">send</button>
-</div>
+                    {% endfor %}
+                    </ui>
+                </div>
+                <div class="card-footer"></div>
+            </div></div>
+            {% if chat_user == request.user.username %}
+            <div class="col-sm-7 col-md-8 col-xl-6 chat">
+                <div class="card">
+                    <h1 style="display: flex; align-items: center; justify-content: center; margin: auto; color: rgb(67, 65, 65);"><i class="fas fa-plus-circle"></i>  Add chat </h1>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-sm-7 col-md-8 col-xl-6 chat">
+                <div class="card">
+                    <div class="card-header msg_head">
+                        <div class="d-flex bd-highlight">
+                            <div class="img_cont">
+                                <img src="{{ user_profile.profile_img.url }}" class="rounded-circle user_img">
+                                <!-- {% if user.profile.online_status %}
+                                <span class="online_icon"></span>
+                                {% else %}
+                                <span class="online_icon offline"></span>
+                                {% endif %} -->
+                            </div>
+                            <div class="user_info">
+                                <span>{{ user_profile.name }}</span>
+                                {% if user.profile.online_status %}
+                                <p id="{{user.username}}_small">Online</p>
+                                {% else %}
+                                <p id="{{user.username}}_small">Offline</p>
+                                {% endif %}
+                            </div>
+                            <div class="video_cam">
+                                <span><i class="fas fa-video"></i></span>
+                                <span><i class="fas fa-phone"></i></span>
+                            </div>
+                        </div>
+                        <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
+                        <div class="action_menu">
+                            <ul>
+                                <li><i class="fas fa-user-circle"></i> View profile</li>
+                                <li><i class="fas fa-users"></i> Add to close friends</li>
+                                <li><i class="fas fa-plus"></i> Add to group</li>
+                                <li><i class="fas fa-ban"></i> Block</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="chat-body" class="card-body msg_card_body">
+                        {% for message in messages %}
+                        {% if message.sender == request.user.username %}
+                        <div class="d-flex justify-content-end mb-4">
+                            <div class="msg_cotainer_send">
+                                <p style="min-width: 50px; margin-bottom: 0;">{{message.message}}{% if message.is_seen %}
+                                    <small style="font-size: xx-small;"  class="{{user.username}}_seen">seen</small>
+                                    {% else %}<small style="font-size: xx-small;"  class="{{user.username}}_seen"></small>{% endif %}</p>
+                                <span class="msg_time_send">{{message.timestamp|time:'H:i'}}</span>
+                            </div>
+                            <div class="img_cont_msg">
+                                <img src="{{ my_profile.profile_img.url }}" class="rounded-circle user_img_msg">
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="d-flex justify-content-start mb-4">
+                            <div class="img_cont_msg">
+                                <img src="{{ user_profile.profile_img.url }}" class="rounded-circle user_img_msg">
+                            </div>
+                            <div class="msg_cotainer">
+                                <p style="min-width: 50px; margin-bottom: 0;">{{message.message}}</p>
+                                <span class="msg_time">{{message.timestamp|time:'H:i'}}</span>
+                            </div>
+                        </div>
+
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="card-footer">
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
+                            </div>
+                            <textarea name="" id="input-text" class="form-control type_msg" placeholder="Type your message..."></textarea>
+                            <div class="input-group-append">
+                                <span id="submit-btn" class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>            
+            
+<!-- JQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="{% static 'js/chat_style.js' %}" defer></script>
+</body>
 
 {{user.id|json_script:"json-username"}}
 {{user.username|json_script:"json-username-receiver"}}
@@ -61,6 +165,9 @@
     const message_username = JSON.parse(document.getElementById('json-message-username').textContent);
     const receiver = JSON.parse(document.getElementById('json-username-receiver').textContent);
     
+    function scrollToBottom() {
+        scrollContainer.scrollTop = scrollContainer.scrollHeight;
+    }
 
     const socket = new WebSocket(
         'ws://'
@@ -112,17 +219,27 @@
                 if (small_status_to_change === 'Online') {
                     smallTag = 'seen';
                 }
-                document.querySelector('#chat-body').innerHTML += `<tr>
-                                                                        <td style="width: 400px; align-items: end; height: 10px; ">
-                                                                        <p style="float: right;">${data.message}  <small class="${receiver}_seen">${smallTag}</small></p>
-                                                                        </td>
-                                                                    </tr>`
+                document.querySelector('#chat-body').innerHTML += `<div class="d-flex justify-content-end mb-4">
+                                                                        <div class="msg_cotainer_send">
+                                                                            <p style="min-width: 50px; margin-bottom: 0;">${data.message}<small style="font-size: xx-small;"  class="{{user.username}}_seen">${smallTag}</small></p>
+                                                                            <span class="msg_time_send">now</span>
+                                                                        </div>
+                                                                        <div class="img_cont_msg">
+                                                                            <img src="{{ my_profile.profile_img.url }}" class="rounded-circle user_img_msg">
+                                                                        </div>
+                                                                    </div>`
+                scrollToBottom()
             }else{
-                document.querySelector('#chat-body').innerHTML += `<tr>
-                                                                        <td style="height: 10px; ">
-                                                                        <p style="float: left; width: 400px;" >${data.message}</p>
-                                                                        </td>
-                                                                    </tr>`
+                document.querySelector('#chat-body').innerHTML += `<div class="d-flex justify-content-start mb-4">
+                                                                        <div class="img_cont_msg">
+                                                                            <img src="{{ user_profile.profile_img.url }}" class="rounded-circle user_img_msg">
+                                                                        </div>
+                                                                        <div class="msg_cotainer">
+                                                                            <p style="min-width: 50px; margin-bottom: 0;">${data.message}</p>
+                                                                            <span class="msg_time">now</span>
+                                                                        </div>
+                                                                    </div>`
+                scrollToBottom()
             }
         }
     }

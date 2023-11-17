@@ -8,6 +8,7 @@ from post.models import Post, Tag, Follow, Stream, Likes, Comment
 from .forms import NewPostform, NewCommentForm
 from django.contrib.auth.models import User
 from users.models import Profile
+from .utils import searchProfile
 
 
 
@@ -18,8 +19,10 @@ def index(request):
     user_post = Post.objects.filter(user=user)
     all_users = User.objects.all()
     follow_status = Follow.objects.filter(following=user, follower=user)
+    likes = Likes.objects.filter(user=user)
 
     profile = Profile.objects.all()
+    search_profile, search_query = searchProfile(request)
 
     posts = Stream.objects.filter(user=user)
     group_ids = []
@@ -37,6 +40,9 @@ def index(request):
         'follow_status': follow_status,
         'profile': profile,
         'all_users': all_users,
+        'search_profile': search_profile,
+        'search_query': search_query,
+        'likes' : likes
         # 'users_paginator': users_paginator,
     }
     return render(request,'index.html', context)
@@ -109,6 +115,7 @@ def like(request, pk):
     post = Post.objects.get(id=pk)
     current_likes = post.likes
     liked = Likes.objects.filter(user=user, post=post).count()
+    print(liked)
 
     if not liked:
         Likes.objects.create(user=user, post=post)

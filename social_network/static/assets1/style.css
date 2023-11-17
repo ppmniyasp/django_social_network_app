@@ -48,6 +48,7 @@
 /* General Styles */
 body {
     min-height: 100vh;
+    padding-top: 54px;
 
     display: flex;
     flex-direction: column;
@@ -64,7 +65,7 @@ img { max-width: 100%; }
 .header {
     width: 100%;
     height: var(--header-height);
-    background-color: var(--primary);
+    background-color:white;
 
     display: flex;
     justify-content: center;
@@ -132,7 +133,7 @@ img { max-width: 100%; }
 }
 .header__search input {
     width: 100%;
-    height: 100%;
+    height: 37px;
     background-color: var(--secondary);
 
     padding: 4px 10px 4px 28px;
@@ -533,9 +534,9 @@ img { max-width: 100%; }
 
 /* Side Menu */
 .side-menu {
-    max-width: 290px;
+    max-width: 350px;
     position: fixed;
-    left: 50%; top: 84px;
+    left: 50%; top: 80PX;
     transform: translateX(calc(-50% + 322px));
 
     display: none;
@@ -824,12 +825,12 @@ img { max-width: 100%; }
 
 @media (min-width: 768px) {
     :root {
-        --header-height: 54px;
+        --header-height: 65px;
         --nav-height: 0px;
     }
 
     .header__content {
-        padding: 0 20px;
+        padding: 15PX 20px;
     }
 
     .header__search {
@@ -845,7 +846,7 @@ img { max-width: 100%; }
     }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 950px) {
     .main-container {
         background-color: var(--secondary);
         margin-top: 0;

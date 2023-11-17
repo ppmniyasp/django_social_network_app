@@ -9,11 +9,11 @@ html {
 .chat {
 	margin-top: auto;
 	margin-bottom: auto;
-	height: 600px;
+	height: 550px;
 }
 
 .card {
-	height: 600px;
+	height: 550px;
 	border-radius: 15px !important;
 	background-color: white !important;
 }
@@ -232,6 +232,9 @@ html {
 	right: 15px;
 	display: none;
 }
+.bold{
+	font-weight: bold;
+}
 
 .action_menu ul {
 	list-style: none;
@@ -282,8 +285,11 @@ html {
 	background: #555;
 }
 
-@media(max-width: 576px) {
+@media(max-width: 767px) {
 	.contacts_card {
-		margin-bottom: 15px !important;
+		margin-bottom: 20px !important;
+	}
+	.chat{
+		margin-top: 15px !important;
 	}
 }
